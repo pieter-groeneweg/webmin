@@ -85,15 +85,13 @@ my $i = 0;
 foreach my $a (@{$actionlist->{'words'}}, undef) {
 	my $action;
 	my %opts;
-	if ($a && $a =~ /^(\S.*\S)\[(.*)\]$/) {
-		$action = $1;
-		%opts = map { my ($n, $v) = split(/=/, $_);
-			      $v =~ s/^"(.*)"/$1/;
-			      ($n, $v) } split(/,\s+/, $2);
-		}
+	if ($a && $a =~ /^([^\[]+)\[(.*)\]$/) {
+    		$action = $1;
+    		$opts{'__raw'} = $2;   # store EXACT raw string
+	}
 	else {
-		$action = $a;
-		}
+    		$action = $a;
+	}
 	my @oopts = grep { !/^(name|port|protocol)$/ } (keys %opts);
 	$atable .= &ui_columns_row([
 		&ui_select("action_$i", $action,
@@ -107,8 +105,7 @@ foreach my $a (@{$actionlist->{'words'}}, undef) {
 			     [ 'tcp', 'TCP' ],
 			     [ 'udp', 'UDP' ],
 			     [ 'icmp', 'ICMP' ] ]),
-		&ui_textbox("others_$i",
-			join(" ", map { $_."=".$opts{$_} } @oopts), 40),
+		&ui_textbox("others_$i", $opts{'__raw'} // "", 40),
 		]);
 	$i++;
 	}
