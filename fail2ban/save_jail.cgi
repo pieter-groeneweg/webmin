@@ -85,12 +85,12 @@ else {
 		if ($in{"protocol_$i"}) {
 			push(@opts, "protocol=".$in{"protocol_$i"});
 			}
-		foreach my $oo (split(/\s+/, $in{"others_$i"})) {
-			my ($n, $v) = split(/=/, $oo, 2);
-			$v = "\"$v\"" if ($v =~ /\s|,|=/ && $v !~ /['"]/);
-			push(@opts, "$n=$v");
+		if (defined $in{"others_$i"} && $in{"others_$i"} ne "") {
+    			push(@actions, $in{"action_$i"}."[".$in{"others_$i"}."]");
 			}
-		push(@actions, $in{"action_$i"}."[".join(", ", @opts)."]");
+		else {
+    			push(@actions, $in{"action_$i"});
+			}
 		}
 
 	# Split and validate log file paths
